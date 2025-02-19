@@ -1,0 +1,11 @@
+# Environment Variables
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Other common files to ignore
+node_modules/
+*.log
+.DS_Store
