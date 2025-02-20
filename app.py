@@ -12,10 +12,15 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 
 @app.route('/api/weather/<location>')
 def get_weather(location):
+    print("=== Starting weather request ===")
+    print(f"Requested location: {location}")
+    
     try:
-        api_key = os.getenv('OPENWEATHER_API_KEY')
-        # Debug print to check if API key is loaded
+        api_key = os.getenv('API_KEY')
         print(f"API key exists: {api_key is not None}")
+        if not api_key:
+            print("WARNING: API_KEY is not set in environment variables!")
+            return jsonify({'error': 'API key not configured'}), 500
         
         url = f'https://api.openweathermap.org/data/2.5/weather'
         params = {
@@ -27,7 +32,6 @@ def get_weather(location):
         print(f"Making request to OpenWeather API...")
         response = requests.get(url, params=params)
         
-        # Debug print the response
         print(f"OpenWeather API Response Status: {response.status_code}")
         print(f"OpenWeather API Response: {response.text}")
         
@@ -39,14 +43,16 @@ def get_weather(location):
             'wind': round(weather_data['wind']['speed']),
             'description': weather_data['weather'][0]['description']
         }
+        print("=== Successfully completed weather request ===")
         return jsonify(formatted_response)
+        
     except requests.exceptions.RequestException as e:
         error_msg = f"Request Exception: {str(e)}"
-        print(error_msg)
+        print(f"ERROR: {error_msg}")
         return jsonify({'error': error_msg}), 500
     except Exception as e:
         error_msg = f"General Exception: {str(e)}"
-        print(error_msg)
+        print(f"ERROR: {error_msg}")
         return jsonify({'error': error_msg}), 500
 
 if __name__ == '__main__':
