@@ -15,7 +15,7 @@ def get_weather(location):
     try:
         api_key = os.getenv('OPENWEATHER_API_KEY')
         # Debug print to check if API key is loaded
-        print(f"Using API key: {api_key}")
+        print(f"API key exists: {api_key is not None}")
         
         url = f'https://api.openweathermap.org/data/2.5/weather'
         params = {
@@ -24,9 +24,7 @@ def get_weather(location):
             'units': 'metric'
         }
         
-        # Debug print the full URL (without API key)
-        print(f"Requesting URL: {url}")
-        
+        print(f"Making request to OpenWeather API...")
         response = requests.get(url, params=params)
         
         # Debug print the response
@@ -43,11 +41,13 @@ def get_weather(location):
         }
         return jsonify(formatted_response)
     except requests.exceptions.RequestException as e:
-        print(f"Request Exception: {str(e)}")
-        return jsonify({'error': f'Weather API error: {str(e)}'}), 500
+        error_msg = f"Request Exception: {str(e)}"
+        print(error_msg)
+        return jsonify({'error': error_msg}), 500
     except Exception as e:
-        print(f"General Exception: {str(e)}")
-        return jsonify({'error': str(e)}), 500
+        error_msg = f"General Exception: {str(e)}"
+        print(error_msg)
+        return jsonify({'error': error_msg}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
